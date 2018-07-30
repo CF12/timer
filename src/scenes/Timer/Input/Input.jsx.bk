@@ -1,0 +1,136 @@
+import React from 'react'
+
+import './Input.scss'
+
+function pad (input, length) {
+  input = String(input)
+  while (input.length < length) input = '0' + input
+  return input
+}
+
+export default class Input extends React.Component {
+  constructor (props) {
+    super()
+    this.onChange = this.onChange.bind(this)
+    this.onSubmit = this.onSubmit.bind(this)
+    this.handleInputLimit = this.handleInputLimit.bind(this)
+    this.handleSeconds = this.handleSeconds.bind(this)
+    this.handleChange = this.handleChange.bind(this)
+
+    this.state = {
+      hours: '00',
+      minutes: '00',
+      seconds: '00'
+    }
+  }
+
+  onChange (e) {
+    console.log('ONCHANGE TRIGGERED: ' + e.target.value)
+    this.setState({
+      [e.target.name]: parseInt(e.target.value)
+    })
+  }
+
+  handleInputLimit (e, limit) {
+    const value = parseInt(e.target.value + e.key)
+
+    if (isNaN(e.key) && !e.ctrlKey) {
+      e.preventDefault()
+    } else if (value >= limit) {
+      e.preventDefault()
+      e.target.value = limit
+      this.setState({
+        [e.target.name]: limit
+      })
+    } else if (value <= 0) {
+      e.preventDefault()
+      e.target.value = '00'
+    }
+  }
+
+  handleSeconds (e) {
+    e.preventDefault()
+
+    if (isNaN(e.key)) return
+    else if (String(parseInt(this.state.hours)).length === 2) return
+
+    const value = e.target.value + e.key
+    const realValue = String(parseInt(value))
+
+    if (value.length > 2) {
+      this.handleChange(e.target.name, value)
+    } else {
+      this.setState({
+        seconds: pad(realValue, 2)
+      })
+    }
+  }
+
+  handleChange (field, value) {
+    if (field === 'seconds') {
+      const parsedMinutes = pad(parseInt(this.state.minutes) + value.charAt(0), 2)
+      console.log(parsedMinutes)
+
+      this.setState({
+        hours: (parsedMinutes.length > 2)
+          ? pad(parseInt(this.state.hours) + this.state.minutes.charAt(0), 2)
+          : this.state.hours,
+        minutes: (parsedMinutes.length > 2)
+          ? parsedMinutes.slice(1)
+          : parsedMinutes,
+        seconds: pad(value.slice(1))
+      })
+
+      if (this.state.minutes.length > 2) {
+        this.setState({
+          hours: pad(parseInt(this.state.hours) + this.state.minutes.charAt(0), 2),
+          minutes: pad(this.state.minutes.slice(1))
+        })
+      }
+    }
+  }
+
+  handleFocus (e) {
+    e.target.select()
+  }
+
+  onSubmit (e) {
+    e.preventDefault()
+    this.props.onSubmit(this.state)
+  }
+
+  render () {
+    return (
+      <div>
+        <form className='timer-input__container fb--center fb--column' onSubmit={this.onSubmit}>
+          <div className='timer-input__fields fb--center'>
+            <input
+              name='hours'
+              value={this.state.hours}
+              onClick={this.handleFocus}
+              onChange={this.onChange}
+              onKeyPress={(e) => this.handleInputLimit(e, 24)}
+              onPaste={(e) => e.preventDefault()} />
+            <p>:</p>
+            <input
+              name='minutes'
+              value={this.state.minutes}
+              onClick={this.handleFocus}
+              onChange={this.onChange}
+              onKeyPress={(e) => this.handleInputLimit(e, 60)}
+              onPaste={(e) => e.preventDefault()} />
+            <p>:</p>
+            <input
+              name='seconds'
+              value={this.state.seconds}
+              onClick={this.handleFocus}
+              onChange={this.onChange}
+              onKeyPress={(e) => this.handleSeconds(e)}
+              onPaste={(e) => e.preventDefault()} />
+          </div>
+          <button className='timer-input__button'>START</button>
+        </form>
+      </div>
+    )
+  }
+}

@@ -1,19 +1,9 @@
 import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import './Home.scss'
+import './Timer.scss'
 
-import Input from './Input/TimerInput.jsx'
-import Display from './Display/Timer.jsx'
-
-const Button = (props) => {
-  return (
-    <div className='home__button fb--center fb--column'>
-      <p>{props.name}</p>
-      <FontAwesomeIcon icon={['fas', props.icon]} />
-    </div>
-  )
-}
+import Input from './Input/Input.jsx'
+import Display from './Display/Display.jsx'
 
 export default class Timer extends React.Component {
   constructor () {
@@ -69,20 +59,12 @@ export default class Timer extends React.Component {
 
   render () {
     return (
-      <div className='home__container fb--center fb--column'>
-        <h1 className='home__title'>clock.cf12</h1>
-
-        <div className='home__timer-container fb--center'>
-          {
-            (this.state.running)
-              ? <Display time={this.state.time} />
-              : <Input onSubmit={this.onSubmit} />
-          }
-        </div>
-
-        <span className='fb--center'>
-          <Button name='Timer' icon='hourglass-start' />
-        </span>
+      <div className='timer__container fb--center fb--column'>
+        {
+          (this.state.running)
+            ? <Display time={this.state.time} />
+            : <Input onSubmit={this.onSubmit} />
+        }
       </div>
     )
   }

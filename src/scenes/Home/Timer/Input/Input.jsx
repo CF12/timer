@@ -1,6 +1,6 @@
 import React from 'react'
 
-import './TimerInput.scss'
+import './Input.scss'
 
 export default class Input extends React.Component {
   constructor (props) {

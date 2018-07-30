@@ -1,6 +1,6 @@
 import React from 'react'
 
-import './Timer.scss'
+import './Display.scss'
 
 import Pulse from './Pulse/Pulse.jsx'
 
@@ -32,7 +32,7 @@ export default class Display extends React.Component {
 
   render () {
     return (
-      <div className='timer__container'>
+      <div className='timer__container fb--center'>
         <Pulse className='timer__pulse' />
         <div className='timer__label fb--center fb--row'>
           <p>{this.state.hours}</p>:
